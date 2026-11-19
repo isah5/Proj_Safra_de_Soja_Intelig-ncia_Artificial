@@ -14,7 +14,16 @@ Data       | Autor           | Descrição
 2026-09-24 | Pedro Henrique  | Adicionados dados diários do INMET (45 estações do RS, 2000-2023), baixados manualmente via portal BDMEP
 2026-09-25 | Lorenzo Tadeo   | Estendido o range do IBGE e do ONI de 2000-2023 para 2000-2025 (a API do IBGE já publica dados até 2025); INMET segue em 2000-2023, atualização pendente
 2026-09-25 | Isabelle Franco | Estendido o INMET para 2000-2025 (download manual complementar via BDMEP, mesmas 45 estações, período 2024-2025); base completa nas 3 fontes
+2026-11-19 | Pedro Henrique  | N2: painel de modelagem `painel_modelagem_n2.csv` (estação válida mais próxima, clima dez–fev, ONI pré-safra, histórico sem vazamento e adubação fosfatada integrada); dicionário completo
 -->
+
+> **Resumo do dataset (N2):** painel município × safra do RS, 2000–2025,
+> com 12.922 linhas (497 municípios × 26 safras) e 42 colunas. Junta o
+> rendimento da soja (IBGE/SIDRA), o clima diário de 45 estações INMET
+> agregado por safra, o índice ONI (NOAA) e atributos de adubação fosfatada
+> (Embrapa/CQFS-RS/SC). Arquivo: `processed/painel_modelagem_n2.csv`, gerado
+> por `notebooks/modelagem_n2.ipynb` a partir de `raw/`. Todos os dados são
+> públicos e agregados, sem dados pessoais.
 
 # Dataset — descrição
 
@@ -81,6 +90,12 @@ manter o mesmo conjunto de 45 estações ao longo de toda a série — misturar
 estações com históricos de tamanhos muito diferentes complicaria a
 interpretação sem ganho real de cobertura.
 
+**Mudança na N2:** em vez de usar sempre a estação mais próxima (que podia
+estar em pane), cada município recebe, em cada safra, a estação **válida**
+mais próxima, até 100 km. Com isso, a cobertura climática dos pares com
+rendimento subiu de 55,7% para 79,2%. A distância efetiva fica registrada em
+`dist_estacao_km` (mediana de 36,7 km).
+
 - `dataset/raw/inmet_estacoes_metadados.csv` — uma linha por estação, com
   código, nome, latitude, longitude, altitude e situação (`Operante`,
   `Pane` ou `Desativada`).
@@ -135,8 +150,20 @@ exemplo, assumir uma classe de teor de solo típica por região do RS (com
 base em levantamentos de fertilidade do solo já publicados, citando a
 fonte) e aplicar a dose correspondente da Tabela 2.4 como atributo fixo ou
 por região, deixando claro no artigo que é uma aproximação, não um dado
-observado. Essa limitação já era esperada e está descrita no artigo
-(seção 3.2, nota "Limitação a declarar explicitamente").
+observado.
+
+**Hipótese adotada na N2** (implementada em `src/soja_pipeline.py`,
+função `atributos_adubacao`): solo com teor de P "Médio" em 2º cultivo
+(dose-base de 30 kg/ha de P₂O₅ e 45 kg/ha de K₂O para 2 t/ha), acrescida de
+15 kg/ha de P₂O₅ e 25 kg/ha de K₂O por tonelada de rendimento **esperado**
+acima de 2 t/ha. O rendimento esperado é a média histórica do município
+antes da safra, sem vazamento. A dose é convertida em quantidade equivalente
+de produto: MAP (52% de P₂O₅), Superfosfato Simples (18%), Superfosfato
+Triplo (41%) e DAP (46%). A ablação do artigo (seção 4.5) mostra que esses
+atributos **não acrescentam informação preditiva**. É o esperado por
+construção: a dose é função monótona da média histórica (Spearman de 0,94).
+Para ganhar valor, eles precisariam de dados **observados** de fertilidade
+do solo por município.
 
 ### Coordenadas dos municípios (auxiliar, para casar com o INMET)
 
@@ -150,26 +177,48 @@ mais próxima de cada município. Usamos a base pública
 
 - Chave primária da base final: `codigo_ibge_municipio` + `ano_safra`
 - Arquivo(s) brutos: `dataset/raw/`
-- Arquivo processado/final: `dataset/processed/painel_municipio_safra.csv` —
-  gerado pelo notebook `notebooks/analise_exploratoria.ipynb`, junta IBGE +
-  clima INMET (estação mais próxima) + ONI por safra. **Ainda não inclui**
-  a adubação fosfatada (ver seção acima).
+- `dataset/processed/painel_municipio_safra.csv` (N1): gerado por
+  `notebooks/analise_exploratoria.ipynb`; junta IBGE, o clima INMET da
+  estação mais próxima e o ONI por safra.
+- `dataset/processed/painel_modelagem_n2.csv` (**N2, usado nos modelos**):
+  gerado por `notebooks/modelagem_n2.ipynb`, via
+  `src/soja_pipeline.construir_painel()`. São 12.922 linhas e 42 colunas
+  (dicionário abaixo). A base efetivamente modelada é um subconjunto: pares
+  com rendimento, ≥ 3 safras anteriores e clima válido, ou seja, 7.951
+  pares de 440 municípios, safras 2003–2025.
 
-## Dicionário de variáveis
+## Dicionário de variáveis (painel N2)
+
+Todas as variáveis de histórico usam **somente safras anteriores** à safra
+da linha, para evitar vazamento. Janela da safra: out–dez do ano anterior e
+jan–mar do ano da safra. Período crítico: dez–fev.
 
 | Coluna | Descrição | Unidade | Fonte |
 |---|---|---|---|
-| `codigo_ibge_municipio` | Código IBGE do município | — | IBGE |
-| `municipio` | Nome do município | — | IBGE |
-| `ano_safra` | Ano da safra | ano | IBGE |
-| `rendimento_kg_ha` | Rendimento médio (variável-alvo) | kg/ha | IBGE/SIDRA |
-| `area_plantada_ha` | Área plantada | ha | IBGE/SIDRA |
-| `producao_ton` | Produção total | toneladas | IBGE/SIDRA |
-| `oni_media_safra` | ONI médio na janela semeadura–colheita | índice | NOAA/CPC |
-| `precipitacao_total_safra_mm` | Soma da precipitação diária na janela semeadura–colheita (estação mais próxima) | mm | INMET |
-| `temperatura_media_safra_c` | Média da temperatura média diária na janela semeadura–colheita | °C | INMET |
-| `dose_p2o5_recomendada` | Dose de P₂O₅ recomendada por classe de solo | kg/ha | Embrapa / CQFS-RS/SC |
-| ... | [completar conforme colunas finais geradas nos notebooks] | | |
+| `codigo_ibge_municipio`, `municipio` | Código IBGE e nome do município | — | IBGE |
+| `ano_safra` | Ano da safra (colheita) | ano | IBGE |
+| `area_plantada_ha`, `area_colhida_ha`, `producao_ton` | Área e produção | ha / t | IBGE/SIDRA |
+| `rendimento_kg_ha` | Rendimento médio (**variável-alvo**) | kg/ha | IBGE/SIDRA |
+| `latitude`, `longitude` | Centróide do município | graus | kelvins/municipios-brasileiros |
+| `codigo_estacao`, `dist_estacao_km` | Estação INMET válida mais próxima e distância | — / km | INMET |
+| `dias_validos_safra`, `dias_validos_critico` | Dias com chuva registrada na safra e em dez–fev | dias | INMET |
+| `precip_safra_mm`, `tmed_safra_c` | Chuva acumulada e temperatura média, out–mar (≥ 150 dias) | mm / °C | INMET |
+| `precip_dez_fev_mm` | Chuva em dez–fev (≥ 75 dias; normalizada para 90 dias) | mm | INMET |
+| `balanco_hidrico_dez_fev_mm` | Chuva − ETo (Hargreaves-Samani) em dez–fev | mm | INMET (calculado) |
+| `anomalia_precip_dez_fev_pct` | Chuva dez–fev frente à média das safras anteriores da estação | % | INMET (calculado) |
+| `tmax_dez_fev_c` | Média da temperatura máxima diária, dez–fev | °C | INMET |
+| `dias_calor_dez_fev` | Dias com Tmax ≥ 32 °C em dez–fev | dias | INMET |
+| `max_dias_secos_dez_fev` | Maior sequência de dias com chuva < 1 mm em dez–fev | dias | INMET |
+| `precip_nov_mm` … `precip_mar_mm` | Chuva mensal de nov a mar (normalizada para 30 dias) | mm | INMET |
+| `oni_pre_safra` | ONI médio ASO + SON do ano anterior (conhecido na semeadura) | índice | NOAA/CPC |
+| `oni_media_safra` | ONI médio OND, NDJ, DJF e JFM | índice | NOAA/CPC |
+| `fase_enos` | El Niño (ONI ≥ 0,5), La Niña (≤ −0,5) ou Neutro | categoria | calculado |
+| `rend_lag1`, `rend_lag2` | Rendimento nas safras t−1 e t−2 | kg/ha | IBGE (calculado) |
+| `rend_media_hist`, `rend_media_5safras`, `rend_max_hist` | Média expandida, média das 5 anteriores e máximo histórico | kg/ha | IBGE (calculado) |
+| `n_safras_hist` | Nº de safras anteriores com rendimento | safras | IBGE (calculado) |
+| `log_area_lag1` | log(1 + área plantada na safra anterior) | — | IBGE (calculado) |
+| `dose_p2o5_recomendada`, `dose_k2o_recomendada` | Dose recomendada pela hipótese descrita acima | kg/ha | Embrapa/CQFS (calculado) |
+| `kg_map_ha_equiv`, `kg_ss_ha_equiv`, `kg_st_ha_equiv`, `kg_dap_ha_equiv` | Quantidade equivalente de MAP, SS, ST e DAP | kg/ha | Embrapa/CQFS (calculado) |
 
 Colunas brutas disponíveis em `inmet_estacoes_RS_consolidado_2000_2025.csv` (antes da
 agregação por safra): `Codigo Estacao`, `Nome Estacao`, `Latitude`,
@@ -196,7 +245,16 @@ RAJADA MAXIMA DIARIA (AUT)(m/s)`, `VENTO, VELOCIDADE MEDIA DIARIA
   série e devem ser tratados como dado faltante, não como zero.
 - A rede automática do INMET no RS começou a operar de forma escalonada
   (algumas estações só têm dados a partir de 2006-2007), então nem todo
-  município tem cobertura climática completa desde 2000.
+  município tem cobertura climática completa desde 2000. Na N2, as safras
+  sem clima válido (concentradas em 2003–2006) ficam **fora** da base de
+  modelagem, em vez de imputadas, porque imputar a seca de 2005 com clima
+  "normal" ensinaria uma relação falsa ao modelo.
+- Municípios pequenos têm na PAM valores de rendimento frequentemente
+  repetidos entre safras (estimativas administrativas), o que reduz a
+  qualidade do alvo nesses casos.
+- Representatividade regional: a soja é mais recente no Sul do estado (séries
+  mais curtas); nessa região o ganho do modelo sobre a baseline é pequeno
+  (ver artigo, Tabela 6).
 
 ## Licença de uso dos dados originais
 

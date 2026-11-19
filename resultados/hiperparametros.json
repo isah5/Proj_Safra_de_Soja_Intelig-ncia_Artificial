@@ -1,0 +1,14 @@
+{
+  "Regressão Linear": {
+    "alpha": 100.0
+  },
+  "Random Forest": {
+    "min_samples_leaf": 5,
+    "max_features": 0.6
+  },
+  "Gradient Boosting": {
+    "learning_rate": 0.03,
+    "max_leaf_nodes": 31,
+    "min_samples_leaf": 20
+  }
+}

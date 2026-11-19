@@ -1,3 +1,12 @@
-pandas>=2.0
-numpy>=1.26
-matplotlib>=3.8
+# Dependências do projeto (testado com Python 3.12.15 em 2026-11-19)
+# Instalação: python -m pip install -r notebooks/requirements.txt
+pandas==3.1.1
+numpy==2.5.5
+matplotlib==3.11.2
+scikit-learn==1.9.1
+shap==0.54.1
+# para executar os notebooks pela linha de comando (jupyter nbconvert --execute)
+jupyter-core
+nbformat==5.11.1
+nbconvert==7.17.2
+ipykernel==7.4.0
