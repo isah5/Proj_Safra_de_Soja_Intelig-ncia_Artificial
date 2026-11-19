@@ -18,12 +18,14 @@
 % 2026-11-19 | Pedro Henrique    | Metodologia completa, adubação fosfatada, arquitetura (Fig. 4) e protocolo de avaliação
 % 2026-11-19 | Isabelle Franco   | Resultados completos (Figs. 5--9, Tabs. 4--7), ética e conclusão
 % 2026-11-19 | Lorenzo Tadeo     | Revisão geral, referências e endereços do GitHub/YouTube
+% 2026-11-19 | Isabelle Franco   | Recorte geográfico (por que o RS) e relação com os ODS 2 e 13 (nova Tab. 1; demais tabelas renumeradas)
 % =====================================================================
 \documentclass[12pt]{article}
 
 \usepackage{sbc-template}
 \usepackage{graphicx,url}
 \usepackage{amsmath,amssymb}
+\usepackage{array}
 \usepackage[utf8]{inputenc}
 \usepackage[brazil]{babel}
 % ATENÇÃO: o template original da SBC carrega \usepackage[latin1]{inputenc}
@@ -59,7 +61,11 @@ Orientador: Prof.\ Dr.\ Ivan Carlos Alcântara de Oliveira
 
 \begin{abstract}
   Soybean yield in Rio Grande do Sul (RS), Brazil, varies sharply from one
-  season to the next, mainly because of droughts. We built and evaluated a
+  season to the next, mainly because of droughts: in 2022, state production
+  fell by 54\%. RS was chosen for this exposure to climate risk, its
+  relevance as a producer and the availability of homogeneous public data,
+  and the work is aligned with UN Sustainable Development Goals 2 (Zero
+  Hunger) and 13 (Climate Action). We built and evaluated a
   supervised machine learning pipeline that estimates municipal soybean
   yield (kg/ha) from public data: IBGE/SIDRA Table 1612 (497 municipalities,
   2000--2025), the NOAA Oceanic Niño Index (ONI), daily records from 45 INMET
@@ -88,7 +94,11 @@ Orientador: Prof.\ Dr.\ Ivan Carlos Alcântara de Oliveira
 
 \begin{resumo}
   A produtividade da soja no Rio Grande do Sul (RS) varia muito de uma safra
-  para outra, sobretudo por causa das secas. Este trabalho construiu e
+  para outra, sobretudo por causa das secas: em 2022, a produção do estado
+  caiu 54\%. O RS foi escolhido por essa exposição ao risco climático, pela
+  relevância produtiva e pela disponibilidade de dados públicos homogêneos, e
+  o trabalho se alinha aos ODS 2 (Fome Zero e Agricultura Sustentável) e 13
+  (Ação contra a Mudança Global do Clima). Este trabalho construiu e
   avaliou um pipeline de aprendizado de máquina supervisionado que estima a
   produtividade municipal da soja (kg/ha) a partir de dados públicos: a
   Tabela 1612 do IBGE/SIDRA (497 municípios, 2000--2025), o índice ONI da
@@ -136,6 +146,46 @@ granularidade geográfica -- o município -- dentro de um único estado. Entre
 (2020, 2022, 2023 e 2025) foram afetadas por estiagens
 (Figura~\ref{fig:rendimento-safra}).
 
+\subsection{Recorte geográfico: por que o Rio Grande do Sul}
+\label{sec:recorte-rs}
+
+Todos os dados do projeto se referem ao estado do Rio Grande do Sul. O
+rendimento, a produção e a área vêm dos 497 municípios gaúchos na Tabela
+1612 do IBGE, dos quais 454 produziram soja em pelo menos uma safra entre
+2000 e 2025. O clima vem de 45 estações automáticas do INMET instaladas no
+estado. A adubação segue o manual da CQFS-RS/SC. O recorte foi escolhido
+por quatro razões:
+
+\begin{enumerate}
+  \item \textbf{Relevância produtiva.} A área colhida de soja no RS passou
+    de 3,0 para 6,8 milhões de hectares entre 2000 e 2025, e a cultura está
+    presente em mais de 90\% dos municípios do estado.
+  \item \textbf{Alta exposição ao risco climático.} A soja gaúcha é
+    cultivada quase toda sem irrigação e depende da chuva de verão, por
+    isso sofre quebras frequentes. Entre 2000 e 2025, o rendimento médio dos municípios
+    variou 29\% de uma safra para outra (coeficiente de variação). A
+    produção estadual caiu de 20,4 milhões de toneladas em 2021 para 9,4
+    milhões em 2022, uma perda de 54\% em uma única safra. O sul do Brasil
+    é também uma das regiões onde o ENOS tem efeito mais marcado sobre a
+    chuva e o rendimento da soja \cite{noia2020,pilau2022}. Por isso, é onde uma
+    previsão antecipada tem mais valor.
+  \item \textbf{Disponibilidade e homogeneidade de dados públicos.} O
+    estado tem séries municipais completas no IBGE e estações do INMET
+    com dados diários desde o início dos anos 2000. A recomendação de
+    adubação fosfatada da CQFS-RS/SC \cite{sbcs2016} vale apenas para RS e
+    SC. Em outro estado, ou em vários estados juntos, a hipótese de
+    adubação teria de usar outro manual.
+  \item \textbf{Calendário agrícola único.} No RS, a semeadura ocorre de
+    outubro a dezembro e o período crítico de floração e enchimento de
+    grãos vai de dezembro a fevereiro. Isso permite definir os mesmos
+    atributos climáticos para todos os municípios. Misturar regiões com
+    calendários diferentes, como o Cerrado, exigiria janelas próprias por
+    região.
+\end{enumerate}
+
+\noindent Como consequência, os resultados valem para o RS e não devem ser
+generalizados diretamente para outros estados.
+
 \subsection{Justificativa}
 
 Modelos de aprendizado de máquina baseados em árvores, como Random Forest e
@@ -162,7 +212,48 @@ comparação contra linhas de base honestas), \emph{quanto} da variação de
 produtividade pode de fato ser antecipada com dados abertos -- e
 \emph{quais} fatores a explicam --, em linha com os Objetivos de
 Desenvolvimento Sustentável 2 (Fome Zero e Agricultura Sustentável) e 13
-(Ação contra a Mudança Global do Clima).
+(Ação contra a Mudança Global do Clima), detalhados na
+Seção~\ref{sec:ods}.
+
+\subsection{Relação com os Objetivos de Desenvolvimento Sustentável}
+\label{sec:ods}
+
+O projeto trata de dois ODS da Agenda 2030 da ONU \cite{onu2015}. O
+\textbf{ODS 2 (Fome Zero e Agricultura Sustentável)} é atendido porque a
+soja é base da produção de alimentos, de rações e da renda rural no RS.
+Saber com antecedência onde e quanto a produtividade cai ajuda a manter a
+oferta e a apoiar os produtores atingidos. O \textbf{ODS 13 (Ação contra a
+Mudança Global do Clima)} é atendido porque o problema modelado é o efeito
+do clima sobre a safra. O modelo mede quanto a seca e o calor do período
+crítico reduzem o rendimento de cada município e funciona como sinal de
+alerta precoce de quebra.
+
+A Tabela~\ref{tab:ods} liga cada meta dos dois ODS ao que foi modelado e ao
+resultado obtido no teste (2016--2025). Os resultados estão detalhados na
+Seção~\ref{sec:resultados}.
+
+\begin{table}[ht]
+\centering
+\caption{Metas dos ODS 2 e 13, o que foi modelado e o resultado obtido. Fonte: elaboração própria (2026), com metas de \cite{onu2015}.}
+\label{tab:ods}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{2.9cm}|>{\raggedright\arraybackslash}p{3.3cm}|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}p{3.6cm}|}
+\hline
+\textbf{Meta} & \textbf{O que foi modelado} & \textbf{Resultado obtido} & \textbf{Impacto esperado} \\ \hline
+\textbf{2.4} Sistemas de produção de alimentos sustentáveis e práticas agrícolas resilientes, com capacidade de adaptação a secas e eventos extremos & Produtividade da soja (kg/ha) por município e safra, com histórico, clima do período crítico, ENOS e adubação & MAE de 561--576~kg/ha, 17--19\% menor que a média das 5 últimas safras; maior ganho nas safras de La Niña (de 743 para 559~kg/ha) & Indica, por município, onde a produção tende a cair, para orientar assistência técnica, manejo de risco e apoio aos produtores \\ \hline
+\textbf{2.c} Acesso oportuno a informações de mercado, para limitar a volatilidade extrema dos preços dos alimentos & Previsão no fim da safra (abril), cenário B & Estimativa municipal cerca de 17 meses antes da divulgação do IBGE & Informação antecipada sobre a oferta de soja do estado para cooperativas, armazenagem, logística e poder público \\ \hline
+\textbf{13.1} Resiliência e capacidade de adaptação a riscos relacionados ao clima & Balanço hídrico (chuva $-$ evapotranspiração), calor e dias secos de dez--fev; ONI; explicação SHAP & O balanço hídrico de dez--fev é o fator mais influente (até $-$1.200~kg/ha); em Cruz Alta (2022), o déficit tirou 822~kg/ha da previsão; o ONI pouco contribui & Mede a sensibilidade de cada município ao déficit hídrico e aponta onde a adaptação (irrigação, época de semeadura, zoneamento) é mais urgente \\ \hline
+\textbf{13.3} Capacidade humana e institucional para adaptação e alerta precoce & Alerta de quebra (previsão $<$ 80\% da média histórica) e ranking de risco (\texttt{prever\_safra.py}) & Precisão 0,62 e revocação 0,17 no limiar de 80\%; em 2025, 27 de 41 alertas confirmados (66\%) & Alerta municipal transparente e reprodutível, com limiar ajustável pelo gestor conforme o custo de cada tipo de erro \\ \hline
+\end{tabular}
+\end{table}
+
+A contribuição aos ODS tem limites, que também foram medidos. Na semeadura
+(cenário A), o modelo não supera a linha de base, portanto ainda não serve
+como alerta antes do plantio. Ele subestima secas sem precedente, que
+tendem a se tornar mais frequentes com a mudança do clima. Os atributos de
+adubação não melhoraram a previsão, de modo que o projeto não sustenta
+conclusões sobre eficiência no uso de fertilizantes.
 
 \subsection{Objetivo}
 
@@ -578,7 +669,7 @@ atribuição e não causalidade.
 \textbf{Sustentabilidade.} O treinamento completo roda em poucos minutos em
 um computador pessoal, com custo energético irrelevante. O uso pretendido
 apoia a adaptação às mudanças climáticas (ODS 13) e a segurança alimentar
-(ODS 2).
+(ODS 2), conforme as metas da Tabela~\ref{tab:ods}.
 
 \subsection{Desempenho no teste (2016--2025)}
 
@@ -800,6 +891,15 @@ extrapolação dos modelos de árvores e pelo pequeno número de safras de seca
 no treino. Essas conclusões estão sustentadas por evidências reproduzíveis
 publicadas no repositório.
 
+Em relação aos ODS, o trabalho contribui para o \textbf{ODS 2} ao estimar,
+por município do RS e cerca de 17 meses antes do dado oficial, onde a
+produção de soja tende a cair, com erro 17--19\% menor que o da referência
+histórica. Contribui para o \textbf{ODS 13} ao quantificar o efeito do
+déficit hídrico e do calor de dezembro a fevereiro sobre o rendimento e ao
+oferecer um alerta de quebra explicável. Para que essa contribuição
+alcance o período antes do plantio e as secas mais severas, são necessários
+os avanços listados a seguir.
+
 Como trabalhos futuros, propõem-se: incorporar índices de vegetação por
 satélite (NDVI) e previsões sazonais de chuva para viabilizar o cenário de
 semeadura; usar dados observados de fertilidade do solo, como laudos
@@ -895,6 +995,12 @@ NÓIA JÚNIOR, R. S. et al. Effects of the El Niño Southern Oscillation
 phenomenon and sowing dates on soybean yield and on the occurrence of
 extreme weather events in southern Brazil. \emph{Agricultural and Forest
 Meteorology}, v. 290, 108038, 2020.
+
+\bibitem{onu2015}
+ONU -- ORGANIZAÇÃO DAS NAÇÕES UNIDAS. \emph{Transformando nosso mundo: a
+Agenda 2030 para o Desenvolvimento Sustentável}. Nova York: ONU, 2015.
+Disponível em: \url{https://brasil.un.org/pt-br/sdgs}. Acesso em: 19 nov.
+2026.
 
 \bibitem{pedregosa2011}
 PEDREGOSA, F. et al. Scikit-learn: machine learning in Python. \emph{Journal

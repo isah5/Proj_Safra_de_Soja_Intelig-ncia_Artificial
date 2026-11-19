@@ -15,6 +15,7 @@ Data       | Autor           | Descrição
 2026-09-25 | Lorenzo Tadeo   | Estendido o range do IBGE e do ONI de 2000-2023 para 2000-2025 (a API do IBGE já publica dados até 2025); INMET segue em 2000-2023, atualização pendente
 2026-09-25 | Isabelle Franco | Estendido o INMET para 2000-2025 (download manual complementar via BDMEP, mesmas 45 estações, período 2024-2025); base completa nas 3 fontes
 2026-11-19 | Pedro Henrique  | N2: painel de modelagem `painel_modelagem_n2.csv` (estação válida mais próxima, clima dez–fev, ONI pré-safra, histórico sem vazamento e adubação fosfatada integrada); dicionário completo
+2026-11-19 | Isabelle Franco | Seção do recorte geográfico (dados do RS e por que o RS)
 -->
 
 > **Resumo do dataset (N2):** painel município × safra do RS, 2000–2025,
@@ -24,6 +25,38 @@ Data       | Autor           | Descrição
 > (Embrapa/CQFS-RS/SC). Arquivo: `processed/painel_modelagem_n2.csv`, gerado
 > por `notebooks/modelagem_n2.ipynb` a partir de `raw/`. Todos os dados são
 > públicos e agregados, sem dados pessoais.
+
+## Recorte geográfico: Rio Grande do Sul
+
+Todos os dados são do **estado do Rio Grande do Sul**:
+
+- **Produção (IBGE):** os 497 municípios gaúchos. Destes, 454 produziram
+  soja em pelo menos uma safra entre 2000 e 2025, e 440 entram na modelagem
+  (é preciso ter pelo menos 3 safras de histórico e clima válido).
+- **Clima (INMET):** 45 estações automáticas instaladas no RS. Cada
+  município usa, em cada safra, a estação válida mais próxima, a até 100 km.
+- **Adubação (Embrapa/CQFS-RS/SC):** o manual de calagem e adubação dos
+  estados do RS e de SC.
+- **ENOS (NOAA/ONI):** índice global, igual para todos os municípios.
+
+Por que o RS:
+
+1. **Relevância produtiva:** a área colhida de soja passou de 3,0 para 6,8
+   milhões de ha entre 2000 e 2025, e a cultura está em mais de 90% dos
+   municípios.
+2. **Exposição ao risco climático:** a soja gaúcha é quase toda de sequeiro.
+   O rendimento médio varia 29% entre safras, e a produção caiu de 20,4 Mt
+   (2021) para 9,4 Mt (2022). O sul do Brasil é uma das regiões com maior
+   efeito do El Niño e da La Niña sobre a soja.
+3. **Dados públicos homogêneos:** há séries municipais completas no IBGE,
+   estações INMET com dados diários e uma recomendação de adubação
+   (CQFS-RS/SC) válida só para RS e SC.
+4. **Calendário agrícola único:** a semeadura vai de outubro a dezembro e o
+   período crítico de dezembro a fevereiro, o que permite os mesmos
+   atributos climáticos para todos os municípios.
+
+Os resultados valem para o RS e não devem ser generalizados diretamente para
+outros estados.
 
 # Dataset — descrição
 
@@ -254,7 +287,7 @@ RAJADA MAXIMA DIARIA (AUT)(m/s)`, `VENTO, VELOCIDADE MEDIA DIARIA
   qualidade do alvo nesses casos.
 - Representatividade regional: a soja é mais recente no Sul do estado (séries
   mais curtas); nessa região o ganho do modelo sobre a baseline é pequeno
-  (ver artigo, Tabela 6).
+  (ver artigo, Tabela 7).
 
 ## Licença de uso dos dados originais
 

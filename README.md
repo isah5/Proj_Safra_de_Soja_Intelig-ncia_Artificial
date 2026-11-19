@@ -16,6 +16,7 @@ Data       | Autor              | Descrição
 -----------|--------------------|--------------------------------------------
 2026-09-24 | Isabelle Franco    | Criação inicial do repositório (estrutura N1)
 2026-11-19 | Gustavo Rodrigues  | Atualização para a N2: modelagem, resultados, artefato, instruções de reprodução
+2026-11-19 | Isabelle Franco    | Recorte do RS (por que o RS) e relação com as metas dos ODS 2 e 13
 -->
 
 Projeto da disciplina de **Inteligência Artificial** (Universidade Presbiteriana
@@ -24,9 +25,40 @@ Mackenzie, FCI — Prof. Dr. Ivan Carlos Alcântara de Oliveira).
 **Integrantes:** Isabelle Franco (RA 10425395) · Gustavo Rodrigues (RA 10403091) ·
 Pedro Henrique (RA 10388298) · Lorenzo Tadeo (RA 10420067)
 
-**Problema:** estimar a produtividade da soja (kg/ha) de cada município do RS em
-cada safra, a partir de dados públicos de produção (IBGE), clima (INMET), ENOS
-(NOAA/ONI) e adubação fosfatada (Embrapa/CQFS-RS/SC). Alinhado aos ODS 2 e 13.
+**Problema:** estimar a produtividade da soja (kg/ha) de cada município do
+**Rio Grande do Sul** em cada safra, a partir de dados públicos de produção
+(IBGE), clima (INMET), ENOS (NOAA/ONI) e adubação fosfatada
+(Embrapa/CQFS-RS/SC). O projeto trata dos **ODS 2 (Fome Zero e Agricultura
+Sustentável)** e **13 (Ação contra a Mudança Global do Clima)**.
+
+**Por que o RS:** todos os dados são do estado: 497 municípios no IBGE (440
+modelados) e 45 estações do INMET no RS. O recorte foi escolhido por quatro
+razões:
+
+- **Relevância produtiva:** a área colhida passou de 3,0 para 6,8 milhões
+  de ha entre 2000 e 2025.
+- **Risco climático:** a soja gaúcha é quase toda de sequeiro, e a
+  produção caiu 54% de 2021 para 2022.
+- **Dados públicos homogêneos:** a recomendação de adubação da CQFS-RS/SC
+  vale só para RS e SC.
+- **Calendário agrícola único:** o período crítico, de dezembro a
+  fevereiro, é o mesmo em todo o estado.
+
+## Relação com os ODS 2 e 13
+
+| Meta ODS | O que foi modelado | Resultado (teste 2016–2025) | Impacto esperado |
+|---|---|---|---|
+| **2.4**: produção de alimentos sustentável e resiliente a secas | Produtividade municipal da soja (kg/ha) com histórico, clima, ENOS e adubação | MAE 17–19% menor que a média das 5 últimas safras; maior ganho em La Niña (743 → 559 kg/ha) | Mostra, por município, onde a produção tende a cair, para orientar assistência técnica e apoio aos produtores |
+| **2.c**: informação de mercado oportuna, contra a volatilidade de preços | Previsão no fim da safra (abril) | Estimativa cerca de 17 meses antes do dado oficial do IBGE | Informação antecipada sobre a oferta de soja do estado |
+| **13.1**: resiliência e adaptação a riscos climáticos | Balanço hídrico, calor e dias secos de dez–fev; ONI; SHAP | O balanço hídrico de dez–fev é o fator mais influente; em Cruz Alta (2022), o déficit tirou 822 kg/ha da previsão | Mede a sensibilidade de cada município à seca e indica onde a adaptação é mais urgente |
+| **13.3**: alerta precoce e capacidade institucional | Alerta de quebra e ranking de risco (`src/prever_safra.py`) | Precisão 0,62 e revocação 0,17 no limiar de 80%; em 2025, 27 de 41 alertas confirmados | Alerta municipal explicável, com limiar ajustável pelo gestor |
+
+**Limites:**
+- Na semeadura, o modelo ainda não supera a baseline.
+- Ele subestima secas sem precedente.
+- A adubação não melhorou a previsão.
+
+Os detalhes estão nas seções 1.2 e 1.5 do artigo.
 
 **Técnicas de IA:** aprendizado supervisionado (regressão): Regressão Linear
 (Ridge), Random Forest e Gradient Boosting; validação temporal *walk-forward*;
@@ -42,7 +74,6 @@ IA Explicável com **SHAP**.
 | Notebook N2 — modelagem, avaliação e SHAP | [`notebooks/modelagem_n2.ipynb`](notebooks/modelagem_n2.ipynb) |
 | Código-fonte (pipeline e artefato) | [`src/`](src/) |
 | Tabelas de resultados | [`resultados/`](resultados/) |
-| Roteiro do vídeo (≤ 5 min) | [`docs/roteiro_video.md`](docs/roteiro_video.md) |
 | Vídeo no YouTube | **[inserir link após a gravação]** |
 
 ## Resultados principais (teste fora da amostra, safras 2016–2025)
@@ -88,8 +119,7 @@ meses antes da divulgação oficial do IBGE.
 ├── src/
 │   ├── soja_pipeline.py          # preparação, atributos, modelos, validação, SHAP
 │   └── prever_safra.py           # artefato: ranking municipal de risco (linha de comando)
-├── resultados/                   # métricas, previsões, ablação, SHAP, hiperparâmetros (CSV/JSON)
-└── docs/roteiro_video.md
+└── resultados/                   # métricas, previsões, ablação, SHAP, hiperparâmetros (CSV/JSON)
 ```
 
 ## Como reproduzir

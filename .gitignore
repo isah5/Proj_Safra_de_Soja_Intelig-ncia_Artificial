@@ -19,3 +19,6 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Roteiro do vídeo (uso interno do grupo, fora do repositório)
+docs/roteiro_video.md
