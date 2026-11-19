@@ -12,16 +12,8 @@ Data       | Autor           | Descrição
 2026-11-19 | Isabelle Franco | Criação do roteiro
 -->
 
-# Roteiro do vídeo (até 5 min)
 
-Tempo total planejado: **4 min 40 s**, com margem de 20 s. Cada integrante
-fala em um bloco, o que deixa visível a integração do grupo. Grave a tela
-(notebook, terminal e GitHub) com a câmera do apresentador em miniatura.
-
-Antes de gravar, deixe abertos: o PDF do artigo, `notebooks/modelagem_n2.ipynb`
-(já executado), um terminal na raiz do repositório e a página do GitHub.
-
-| # | Tempo | Quem | O que falar | O que mostrar |
+| # | Tempo | Quem | topicos | O que mostrar |
 |---|---|---|---|---|
 | 1 | 0:00–0:30 | Gustavo| "Olá! Somos Isabelle Franco, Gustavo Rodrigues, Pedro Henrique e Lorenzo Tadeo, do 7º semestre de Ciência da Computação da Universidade Presbiteriana Mackenzie. Este é o projeto da disciplina de Inteligência Artificial, com o Prof. Dr. Ivan Carlos Alcântara de Oliveira: *Previsão de Produtividade da Soja com Machine Learning*." | Primeira página do artigo (título, integrantes, instituição) |
 | 2 | 0:30–1:10 | Pedro | **Problema:** o rendimento da soja no RS oscila muito. Em 2005 caiu para 662 kg/ha e, nas secas de 2020 e 2022, os municípios renderam em média 64% e 58% do normal. O IBGE só publica o número oficial cerca de 17 meses depois da colheita. A pergunta do projeto: dá para estimar antes, por município e só com dados públicos? Alinhado aos ODS 2 e 13. | Figura 1 (rendimento por safra) |
