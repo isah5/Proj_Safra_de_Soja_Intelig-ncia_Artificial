@@ -128,8 +128,8 @@ Requisitos: Python 3.12 (testado com 3.12.15). A execução completa leva cerca 
 3 minutos num computador pessoal e não precisa de GPU.
 
 ```bash
-git clone https://github.com/isah5/Projeto_Safra_de_Soja.git
-cd Projeto_Safra_de_Soja
+git clone https://github.com/isah5/Proj_Safra_de_Soja_Intelig-ncia_Artificial.git
+cd Proj_Safra_de_Soja_Intelig-ncia_Artificial
 python -m venv .venv
 # Windows: .venv\Scripts\activate   |   Linux/macOS: source .venv/bin/activate
 python -m pip install -r notebooks/requirements.txt
