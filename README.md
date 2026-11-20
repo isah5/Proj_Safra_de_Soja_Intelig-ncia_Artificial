@@ -74,7 +74,7 @@ IA Explicável com **SHAP**.
 | Notebook N2 — modelagem, avaliação e SHAP | [`notebooks/modelagem_n2.ipynb`](notebooks/modelagem_n2.ipynb) |
 | Código-fonte (pipeline e artefato) | [`src/`](src/) |
 | Tabelas de resultados | [`resultados/`](resultados/) |
-| Vídeo no YouTube | **[inserir link após a gravação]** |
+| Vídeo no YouTube | **https://youtu.be/uREzIrezDgs** |
 
 ## Resultados principais (teste fora da amostra, safras 2016–2025)
 
